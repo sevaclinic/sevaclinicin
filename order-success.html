@@ -1,0 +1,19 @@
+<!doctype html><html lang='en'><head><meta charset='utf-8'/><title>Order Success</title><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="styles.css"></head><body>
+<header><a href="cart.html" style="float:right;margin:8px;padding:8px 12px;background:#2196f3;color:white;border-radius:6px;text-decoration:none;">Cart</a><h1>Order Placed</h1></header>
+<main id="order-success-main"></main>
+<script>
+const order = JSON.parse(localStorage.getItem('lastOrder')||'null');
+if(!order){ document.getElementById('order-success-main').innerHTML = '<p>No recent order found.</p><p><a href="UPDATED_products.html">Shop now</a></p>'; }
+else{
+    let html = '<h2>Thank you, '+ (order.customer.name||'') +'</h2>';
+    html += '<p>Payment Method: ' + order.method + '</p>';
+    html += '<p>Total: ₹' + order.total + '</p>';
+    html += '<h3>Items</h3><ul>';
+    order.cart.forEach(it=> html += `<li>${it.name} - Size: ${it.size} - Qty: ${it.qty} - ₹${it.price}</li>`);
+    html += '</ul>';
+    document.getElementById('order-success-main').innerHTML = html;
+    // clear cart
+    localStorage.removeItem('cart');
+}
+</script>
+</body></html>

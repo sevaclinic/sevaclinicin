@@ -1,0 +1,54 @@
+<!doctype html><html lang='en'><head><meta charset='utf-8'/><title>Checkout</title><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="styles.css"></head><body>
+<header><a href="cart.html" style="float:right;margin:8px;padding:8px 12px;background:#2196f3;color:white;border-radius:6px;text-decoration:none;">Cart</a><h1>Checkout</h1></header>
+<main>
+<form id="checkout-form">
+<label>Name<br><input name="name" required></label><br>
+<label>Phone<br><input name="phone" required></label><br>
+<label>Address<br><textarea name="address" required></textarea></label><br>
+<label>Pincode<br><input name="pincode" required></label><br>
+<p>Payment Method:<br><label><input type="radio" name="pay" value="COD" checked> Cash on Delivery (COD)</label><br><label><input type="radio" name="pay" value="UPI"> UPI Payment</label></p>
+<button type="submit">Place Order</button>
+</form>
+<script>
+function getCart(){ return JSON.parse(localStorage.getItem('cart')||'[]'); }
+document.getElementById('checkout-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    const form = e.target;
+    const data = {name:form.name.value, phone:form.phone.value, address:form.address.value, pincode:form.pincode.value, pay: form.pay.value};
+    const cart = getCart();
+    if(cart.length===0){ alert('Cart is empty'); return; }
+    let sum = 0;
+    cart.forEach(it=> sum += it.price * it.qty);
+    if(data.pay === 'UPI'){
+        // open UPI payment link for total amount
+        const upi = 'https://www.upi.me/pay?pa=7980661227@ptsbi&am=' + sum + '&cu=INR';
+        // we also include order details in a new window (order-success) after payment attempt
+        window.open(upi,'_blank');
+        // save order to localStorage for order-success page to show
+        const order = {customer: data, cart: cart, total: sum, method:'UPI', timestamp: Date.now()};
+        localStorage.setItem('lastOrder', JSON.stringify(order));
+        window.location.href = 'order-success.html';
+    } else {
+        // COD: open WhatsApp with order details for merchant and save order
+        const merchantNumber = '7980661227'; // merchant phone (no country code)
+        let msg = 'New%20Order%0A';
+        msg += 'Name:%20' + encodeURIComponent(data.name) + '%0A';
+        msg += 'Phone:%20' + encodeURIComponent(data.phone) + '%0A';
+        msg += 'Address:%20' + encodeURIComponent(data.address) + '%0A';
+        msg += 'Pincode:%20' + encodeURIComponent(data.pincode) + '%0A';
+        msg += 'Payment:%20COD%0A';
+        msg += 'Items:%0A';
+        cart.forEach(it=>{
+            msg += encodeURIComponent(it.name) + '%20Size:' + it.size + '%20Qty:' + it.qty + '%20Price:₹' + it.price + '%0A';
+        });
+        msg += 'Total:₹' + sum;
+        const wa = 'https://wa.me/91' + merchantNumber + '?text=' + msg;
+        const order = {customer: data, cart: cart, total: sum, method:'COD', timestamp: Date.now()};
+        localStorage.setItem('lastOrder', JSON.stringify(order));
+        window.open(wa,'_blank');
+        window.location.href = 'order-success.html';
+    }
+});
+</script>
+</main>
+</body></html>

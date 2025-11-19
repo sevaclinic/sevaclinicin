@@ -1,0 +1,41 @@
+<!doctype html><html lang='en'><head><meta charset='utf-8'/><title>Cart</title><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="styles.css"></head><body>
+<header><a href="cart.html" style="float:right;margin:8px;padding:8px 12px;background:#2196f3;color:white;border-radius:6px;text-decoration:none;">Cart</a><h1>Your Cart</h1><a href="UPDATED_products.html">Continue shopping</a></header>
+<main id="cart-main">
+<table id="cart-table" border="0" cellpadding="8"><thead><tr><th>Product</th><th>Size</th><th>Qty</th><th>Price</th><th>Total</th><th></th></tr></thead><tbody></tbody></table>
+<div id="cart-summary"><p id="subtotal"></p><p><button id="checkout-btn">Proceed to Checkout</button></p></div>
+<script>
+function getCart(){ return JSON.parse(localStorage.getItem('cart')||'[]'); }
+function saveCart(c){ localStorage.setItem('cart', JSON.stringify(c)); }
+function renderCart(){
+    const cart = getCart();
+    const tbody = document.querySelector('#cart-table tbody');
+    tbody.innerHTML='';
+    let sum=0;
+    cart.forEach((it,idx)=>{
+        const row = document.createElement('tr');
+        const total = it.price * it.qty;
+        sum += total;
+        row.innerHTML = `<td>${it.name}</td><td>${it.size}</td><td><input type='number' min='1' value='${it.qty}' data-idx='${idx}' class='cart-qty' style='width:60px'></td><td>₹${it.price}</td><td>₹${total}</td><td><button data-idx='${idx}' class='remove'>Remove</button></td>`;
+        tbody.appendChild(row);
+    });
+    document.getElementById('subtotal').innerText = 'Subtotal: ₹' + sum;
+}
+document.addEventListener('click', function(e){
+    if(e.target.matches('.remove')){
+        const idx = parseInt(e.target.getAttribute('data-idx'));
+        const cart=getCart(); cart.splice(idx,1); saveCart(cart); renderCart();
+    }
+    if(e.target.matches('#checkout-btn')){
+        window.location.href = 'checkout.html';
+    }
+});
+document.addEventListener('change', function(e){
+    if(e.target.matches('.cart-qty')){
+        const idx = parseInt(e.target.getAttribute('data-idx'));
+        const val = parseInt(e.target.value)||1;
+        const cart = getCart(); cart[idx].qty = val; saveCart(cart); renderCart();
+    }
+});
+renderCart();
+</script>
+</body></html>

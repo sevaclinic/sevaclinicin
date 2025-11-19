@@ -27,3 +27,10 @@ body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Poppins',sans
 .footer{background:var(--dark);color:white;padding:16px;text-align:center;margin-top:20px}
 .whatsapp{position:fixed;right:18px;bottom:18px;background:#25d366;color:white;border-radius:50%;width:56px;height:56px;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:26px}
 @media(max-width:900px){.hero h1{font-size:28px}.card img{height:200px}}
+
+/* Cart/Checkout additions */
+.product-actions{margin-top:8px}
+.add-to-cart,.buy-now-single{padding:6px 8px;margin-left:6px;border-radius:6px}
+#cart-table{width:100%;border-collapse:collapse}
+#cart-table td, #cart-table th{border:1px solid #ddd}
+#cart-summary{margin-top:12px}
